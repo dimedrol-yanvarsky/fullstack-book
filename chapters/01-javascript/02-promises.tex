@@ -8,8 +8,8 @@
 Промисы заменяют цепочки коллбэков и позволяют писать читаемый
 асинхронный код.
 
-Промис находится в одном из трёх состояний: \texttt{pending},
-\texttt{fulfilled} или \texttt{rejected}.  Переход из \texttt{pending}
+Промис находится в одном из трёх состояний: \inl{pending},
+\inl{fulfilled} или \inl{rejected}.  Переход из \inl{pending}
 необратим — это свойство называют \term{неизменяемость}{immutability}
 результата.
 
@@ -33,7 +33,7 @@ const fetchUser = (id) => new Promise((resolve, reject) => {
 Вероятность успешного завершения $n$ независимых промисов
 равна $P = \prod_{i=1}^{n} p_i$, где $p_i$ — вероятность успеха $i$-го.
 
-В блочной форме ожидаемое время завершения \texttt{Promise.all}:
+В блочной форме ожидаемое время завершения \inl{Promise.all}:
 \begin{equation}
   T_{\text{all}} = \max_{1 \le i \le n} T_i
 \end{equation}
@@ -45,11 +45,11 @@ const [user, posts] = await Promise.all([
 ]);
 \end{code}
 
-\note{Используйте \texttt{Promise.all}, когда запросы независимы
+\note{Используйте \inl{Promise.all}, когда запросы независимы
 друг от друга — это позволяет выполнять их параллельно и сократить
 общее время ожидания.}
 
-\important{Если хотя бы один промис в \texttt{Promise.all} отклоняется,
+\important{Если хотя бы один промис в \inl{Promise.all} отклоняется,
 весь результат будет отклонён. Для случаев, когда нужно получить
 результаты всех промисов независимо от ошибок, используйте
-\texttt{Promise.allSettled}.}
+\inl{Promise.allSettled}.}

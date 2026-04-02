@@ -1,0 +1,97 @@
+% =============================================================================
+%  1.1 Движок браузера
+% =============================================================================
+\section{Браузер Chromium. Структурная схема браузера и принцип работы компонентов движка}
+
+\term{Chromium} - проект веб-браузера с открытым исходным кодом, на базе которого построены такие браузеры, как
+Google Chrome, Microsoft Edge, Opera и другие. Структурная схема браузера изображена на рис.~\ref{fig:chromium-arch}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  box/.style={font=\small, align=center, minimum height=12mm,
+              minimum width=32mm, rounded corners=3pt,
+              inner xsep=10pt, inner ysep=6pt, thick},
+  parser/.style  ={box, fill=orange!15, draw=orange!50},
+  tree/.style    ={box, fill=orange!8,  draw=orange!40},
+  stage/.style   ={box, fill=orange!8,  draw=orange!40},
+  jsblock/.style ={box, fill=teal!12,   draw=teal!40},
+  gpu/.style     ={box, fill=green!10,  draw=green!40},
+  screen/.style  ={box, fill=red!8,     draw=red!30},
+  arr/.style={->, >={Stealth[length=6pt]}, line width=1.8pt, draw=gray!55},
+  arrbind/.style={<->, >={Stealth[length=6pt]}, line width=1.8pt, draw=orange!70},
+  scale=1.0, every node/.append style={transform shape},
+]
+
+% ==================== Контейнеры (рисуем первыми — фон) ====================
+
+% Chromium
+\fill[gray!6, rounded corners=8pt]  (-2, 2.4) rectangle (11.5, -12);
+\draw[gray!40, very thick, rounded corners=8pt] (-2, 2.4) rectangle (11.5, -12);
+\node[font=\normalsize\bfseries, anchor=south, transform shape=false]
+     at (4.75, 2.4) {Chromium (браузер)};
+
+% Blink
+\fill[blue!5, rounded corners=6pt]  (-1.5, 1.4) rectangle (6.5, -9.8);
+\draw[blue!30, thick, rounded corners=6pt] (-1.5, 1.4) rectangle (6.5, -9.8);
+\node[font=\small\bfseries, color=blue!50, anchor=north, transform shape=false]
+     at (2.5, 1.3) {Blink (движок рендеринга)};
+
+% V8
+\fill[teal!5, rounded corners=6pt]  (7, 1.4) rectangle (11, -3.8);
+\draw[teal!30, thick, rounded corners=6pt] (7, 1.4) rectangle (11, -3.8);
+\node[font=\small\bfseries, color=teal!60, anchor=north, transform shape=false]
+     at (9, 1.3) {V8 (движок JS)};
+
+% ==================== Узлы ====================
+
+% Парсеры — CSS слева, HTML справа (чтобы DOM был рядом с V8!)
+\node[parser] (cssp)  at (0.5, 0)    {CSS parser};
+\node[parser] (htmlp) at (4.5, 0)    {HTML parser};
+\node[jsblock](jsp)   at (9, 0)      {JS parser};
+
+% Деревья — CSSOM слева, DOM справа (рядом с JIT!)
+\node[tree]   (cssom) at (0.5, -2.2) {CSSOM};
+\node[tree]   (dom)   at (4.5, -2.2) {DOM tree};
+\node[jsblock](jit)   at (9, -2.2)   {JIT compiler};
+
+% Pipeline (шаг 2.2 между центрами = одинаковые промежутки)
+\node[stage]  (layout) at (2.5, -4.4)  {Layout tree};
+\node[stage]  (paint)  at (2.5, -6.6)  {Paint};
+\node[stage]  (comp)   at (2.5, -8.8)  {Compositing};
+
+% GPU + Экран
+\node[gpu]    (gpup) at (9, -8.8)    {GPU process};
+\node[screen] (scrn) at (9, -11.0)   {Экран};
+
+% ==================== Стрелки ====================
+
+% Парсеры → деревья (вертикальные, чистые)
+\draw[arr] (cssp)  -- (cssom);
+\draw[arr] (htmlp) -- (dom);
+\draw[arr] (jsp)   -- (jit);
+
+% Деревья → Layout tree (сходятся в одну точку, одна стрелка вниз)
+\coordinate (merge) at (2.5, -3.3);
+\draw[line width=1.8pt, draw=gray!55] (cssom.south) |- (merge);
+\draw[line width=1.8pt, draw=gray!55] (dom.south)   |- (merge);
+\draw[arr] (merge) -- (layout.north);
+
+% Pipeline вниз
+\draw[arr] (layout) -- (paint);
+\draw[arr] (paint)  -- (comp);
+
+% Bindings: DOM ↔ JS parser — прямая диагональная линия
+\draw[arrbind] (dom.north east) -- (jsp.south west)
+  node[midway, above, sloped, font=\scriptsize, transform shape=false]{Bindings};
+
+% Compositing → GPU process
+\draw[arr] (comp.east) -- (gpup.west);
+
+% GPU → Экран
+\draw[arr] (gpup) -- (scrn);
+
+\end{tikzpicture}
+\caption{Структурная схема браузера Chromium}
+\label{fig:chromium-arch}
+\end{figure}

@@ -16,6 +16,9 @@ build/
 # Minted cache
 _minted*/
 
+# Auto-generated includes
+_includes.tex
+
 # Pygments custom style (installed via pip, not needed in repo)
 pygments-jsbook/
 

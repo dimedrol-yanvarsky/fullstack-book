@@ -11,6 +11,36 @@
 Каждый файбер-узел хранит информацию о компоненте, его пропсах, состоянии
 и ссылках на дочерние, родительские и соседние узлы, образуя связный список.
 
+\begin{figure}[htbp]
+\centering
+\begin{forest}
+  for tree={
+    draw, rounded corners=3pt, align=center,
+    font=\ttfamily\small,
+    fill=codebg,
+    edge={->, thick, draw=codeframe},
+    l sep=18pt, s sep=12pt,
+    inner xsep=8pt, inner ysep=4pt,
+  }
+  [App, fill=noteframe!20
+    [Header]
+    [Main, fill=noteframe!20
+      [ProductList, fill=noteframe!20
+        [ProductCard]
+        [ProductCard]
+      ]
+      [Cart, fill=importantframe!15
+        [CartItem]
+        [CartItem]
+      ]
+    ]
+    [Footer]
+  ]
+\end{forest}
+\caption{Дерево компонентов React-приложения}
+\label{fig:component-tree}
+\end{figure}
+
 \subsection{Фазы согласования}
 
 \subsubsection{Render-фаза}
@@ -41,5 +71,5 @@ function UserCard({ name, avatar }) {
 
 \important{Не выполняйте побочные эффекты (сетевые запросы, запись в DOM)
 непосредственно в теле компонента — используйте для этого хук
-\texttt{useEffect}.  Нарушение этого правила приведёт к
+\inl{useEffect}.  Нарушение этого правила приведёт к
 непредсказуемому поведению при конкурентном рендеринге.}

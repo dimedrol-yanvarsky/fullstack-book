@@ -57,6 +57,12 @@
   {\VerbatimEnvironment\begin{minted}{#1}}
   {\end{minted}}
 
+% ---------- Оформление глав ----------
+\usepackage{titlesec}
+\titleformat{\chapter}[hang]
+  {\normalfont\Huge\bfseries}{\chaptertitlename\ \thechapter.\;}{0pt}{}
+\titlespacing*{\chapter}{0pt}{-\topskip}{30pt}
+
 % ---------- Оглавление ----------
 \setcounter{tocdepth}{3}        % до subsubsection
 \setcounter{secnumdepth}{4}     % нумерация до paragraph (1.1.1.1)
@@ -80,7 +86,7 @@
 
 % ---------- Геометрия страницы ----------
 \usepackage{geometry}
-\geometry{headheight=15pt}
+\geometry{headheight=15pt, left=25mm, right=25mm, top=25mm, bottom=25mm}
 
 % ---------- Колонтитулы ----------
 \usepackage{fancyhdr}
@@ -98,6 +104,12 @@
   \fancyfoot[C]{\thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
+
+% ---------- Деревья (forest) ----------
+\usepackage{forest}
+
+% ---------- TikZ-библиотеки ----------
+\usetikzlibrary{positioning, backgrounds, fit, arrows.meta}
 
 % ---------- Врезки (tcolorbox) ----------
 \usepackage[most]{tcolorbox}
@@ -132,6 +144,15 @@
 
 % \abbr{ABBR}{Full Name}{пояснение} → «ABBR (Full Name, пояснение)»
 \newcommand{\abbr}[3]{\textbf{#1}\/ (\textenglish{#2}, #3)}
+
+% \inl{код} — инлайн-код с серым фоном
+\newtcbox{\inl}{
+  on line, boxrule=0pt, boxsep=0pt,
+  left=3pt, right=3pt, top=2pt, bottom=2pt,
+  colback=codebg, colframe=codebg,
+  arc=2pt,
+  fontupper=\ttfamily\small,
+}
 
 % \note{текст} — врезка «Примечание»
 \newcommand{\note}[1]{\begin{notebox}#1\end{notebox}}

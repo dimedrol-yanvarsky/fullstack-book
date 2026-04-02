@@ -1,0 +1,8 @@
+## Ignore content inside minted / code environments
+VerbEnvir { code minted }
+
+## Suppress warnings:
+##  4  — Italic correction (`\/') found in non-italic buffer
+## 31  — This text may be ignored (closing brace in newenvironment)
+## 36  — You should put a space in front of parenthesis
+CmdLine { -n4 -n31 -n36 }
