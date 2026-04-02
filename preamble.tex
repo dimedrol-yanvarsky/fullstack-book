@@ -57,6 +57,12 @@
   {\VerbatimEnvironment\begin{minted}{#1}}
   {\end{minted}}
 
+% Нумерованные листинги: \begin{codelist}{язык}{Подпись} ... \end{codelist}
+\renewcommand{\listingscaption}{Листинг}
+\newenvironment{codelist}[2]
+  {\VerbatimEnvironment\begin{listing}[H]\caption{#2}\begin{minted}{#1}}
+  {\end{minted}\end{listing}}
+
 % ---------- Оформление глав ----------
 \usepackage{titlesec}
 \titleformat{\chapter}[hang]
@@ -92,8 +98,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\leftmark}        % глава слева
-\fancyhead[R]{\rightmark}       % раздел справа
+\fancyhead[C]{\leftmark}        % только глава по центру
 \fancyfoot[C]{\thepage}         % страница по центру
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
