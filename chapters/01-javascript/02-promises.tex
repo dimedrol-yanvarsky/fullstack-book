@@ -1,0 +1,55 @@
+% =============================================================================
+%  1.2 Promises
+% =============================================================================
+\section{Промисы (Promises)}
+
+\term{Промис}{Promise} — это объект, представляющий результат асинхронной
+операции, который может быть доступен сейчас, в будущем или никогда.
+Промисы заменяют цепочки коллбэков и позволяют писать читаемый
+асинхронный код.
+
+Промис находится в одном из трёх состояний: \texttt{pending},
+\texttt{fulfilled} или \texttt{rejected}.  Переход из \texttt{pending}
+необратим — это свойство называют \term{неизменяемость}{immutability}
+результата.
+
+\subsection{Создание промиса}
+
+\begin{code}{javascript}
+const fetchUser = (id) => new Promise((resolve, reject) => {
+  const user = db.find(id);
+  if (user) {
+    resolve(user);
+  } else {
+    reject(new Error(`User ${id} not found`));
+  }
+});
+\end{code}
+
+\subsection{Комбинаторы}
+
+\subsubsection{Promise.all}
+
+Вероятность успешного завершения $n$ независимых промисов
+равна $P = \prod_{i=1}^{n} p_i$, где $p_i$ — вероятность успеха $i$-го.
+
+В блочной форме ожидаемое время завершения \texttt{Promise.all}:
+\begin{equation}
+  T_{\text{all}} = \max_{1 \le i \le n} T_i
+\end{equation}
+
+\begin{code}{javascript}
+const [user, posts] = await Promise.all([
+  fetchUser(1),
+  fetchPosts(1),
+]);
+\end{code}
+
+\note{Используйте \texttt{Promise.all}, когда запросы независимы
+друг от друга — это позволяет выполнять их параллельно и сократить
+общее время ожидания.}
+
+\important{Если хотя бы один промис в \texttt{Promise.all} отклоняется,
+весь результат будет отклонён. Для случаев, когда нужно получить
+результаты всех промисов независимо от ошибок, используйте
+\texttt{Promise.allSettled}.}

@@ -1,0 +1,22 @@
+% =============================================================================
+%  main.tex — главный файл проекта
+%  Сборка: latexmk  (см. .latexmkrc)
+% =============================================================================
+\documentclass[a4paper,12pt]{book}
+
+\input{preamble}
+
+\begin{document}
+
+\input{titlepage}
+
+\tableofcontents
+\clearpage
+
+\input{chapters/01-javascript/chapter}
+\input{chapters/02-react/chapter}
+\input{chapters/03-vue/chapter}
+
+\printbibliography[heading=bibintoc, title={Список источников}]
+
+\end{document}

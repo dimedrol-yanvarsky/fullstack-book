@@ -1,0 +1,79 @@
+% =============================================================================
+%  3.2 Composition API
+% =============================================================================
+\section{Composition API}
+
+\term{Composition API}{Composition API} — набор функций, позволяющий
+организовывать логику компонента по функциональным блокам, а не по
+опциям (\texttt{data}, \texttt{methods}, \texttt{computed}).  Это решает
+проблему «разбросанной логики» в крупных компонентах, написанных
+с помощью Options API.
+
+Composition API стал основным рекомендуемым подходом начиная с Vue~3.
+Он позволяет извлекать повторно используемую логику в
+\term{композабл-функции}{Composables}.
+
+\subsection{setup и script setup}
+
+\begin{code}{html}
+<script setup>
+import { ref, computed } from 'vue';
+
+const items = ref([]);
+const count = computed(() => items.value.length);
+
+function addItem(item) {
+  items.value.push(item);
+}
+</script>
+
+<template>
+  <p>Элементов: {{ count }}</p>
+  <button @click="addItem('новый')">Добавить</button>
+</template>
+\end{code}
+
+\subsection{Composables}
+
+\subsubsection{Паттерн извлечения логики}
+
+Композабл — это функция, начинающаяся с \texttt{use}, которая
+инкапсулирует реактивное состояние и логику.  Количество повторного
+использования $R$ композабла определяется числом компонентов, которые
+его импортируют: при $R = n$ экономия строк составляет приблизительно
+$(n - 1) \cdot L$, где $L$ — число строк логики.
+
+\begin{equation}
+  \text{Saved LOC} \approx (n - 1) \cdot L
+\end{equation}
+
+\begin{code}{javascript}
+// composables/useFetch.js
+import { ref, watchEffect } from 'vue';
+
+export function useFetch(url) {
+  const data = ref(null);
+  const error = ref(null);
+
+  watchEffect(async () => {
+    try {
+      const res = await fetch(url.value);
+      data.value = await res.json();
+    } catch (e) {
+      error.value = e;
+    }
+  });
+
+  return { data, error };
+}
+\end{code}
+
+\note{Композабл-функции должны вызываться синхронно внутри
+\texttt{setup()} или \texttt{<script setup>}.  Это позволяет Vue
+корректно привязать реактивные зависимости к текущему экземпляру
+компонента.}
+
+\important{Избегайте создания побочных эффектов в
+\texttt{computed()} — вычисляемые свойства должны быть чистыми
+функциями.  Для побочных эффектов используйте \texttt{watch()}
+или \texttt{watchEffect()}.}

@@ -1,0 +1,60 @@
+% =============================================================================
+%  1.3 Async/Await
+% =============================================================================
+\section{Async/Await}
+
+\term{Асинхронные функции}{Async Functions} — синтаксический сахар над
+промисами, позволяющий писать асинхронный код в синхронном стиле.
+Ключевое слово \texttt{async} превращает функцию в генератор промисов,
+а \texttt{await} приостанавливает выполнение до разрешения промиса.
+
+Под капотом среда исполнения использует конечный автомат: каждый
+\texttt{await} создаёт точку приостановки, и функция возобновляется
+через очередь микрозадач.
+
+\subsection{Базовый синтаксис}
+
+\begin{code}{javascript}
+async function loadDashboard(userId) {
+  try {
+    const user = await fetchUser(userId);
+    const posts = await fetchPosts(user.id);
+    return { user, posts };
+  } catch (err) {
+    console.error('Ошибка загрузки:', err);
+    throw err;
+  }
+}
+\end{code}
+
+\subsection{Параллельное выполнение}
+
+\subsubsection{Антипаттерн: последовательный await}
+
+Время выполнения последовательных \texttt{await} складывается линейно:
+$T = \sum_{i=1}^{n} t_i$, тогда как при параллельном запуске
+$T = \max(t_1, \ldots, t_n)$.
+
+\begin{equation}
+  \text{Speedup} = \frac{\sum_{i=1}^{n} t_i}{\max_{i} t_i}
+\end{equation}
+
+\begin{code}{javascript}
+// Плохо — последовательно
+const user = await fetchUser(1);
+const posts = await fetchPosts(1);   // ждёт завершения fetchUser
+
+// Хорошо — параллельно
+const [user, posts] = await Promise.all([
+  fetchUser(1),
+  fetchPosts(1),
+]);
+\end{code}
+
+\note{Используйте \texttt{Promise.all} внутри \texttt{async}-функций,
+когда операции не зависят друг от друга.  Это особенно важно при
+множественных запросах к \abbr{API}{Application Programming Interface}{программный интерфейс}.}
+
+\important{Не забывайте обрабатывать ошибки в \texttt{async}-функциях.
+Необработанный \texttt{reject} в Node.js приводит к завершению процесса
+начиная с версии~15.}

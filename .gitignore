@@ -1,0 +1,25 @@
+# LaTeX build artifacts
+build/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Minted cache
+_minted*/
+
+# Pygments custom style (installed via pip, not needed in repo)
+pygments-jsbook/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
